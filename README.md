@@ -1,6 +1,6 @@
 # llm-wiki-skills
 
-Two [Claude Code Agent Skills](https://docs.claude.com/en/docs/claude-code/skills) for building a personal, LLM-maintained knowledge base and feeding it from PDF/HTML/ODT sources.
+Three [Claude Code Agent Skills](https://docs.claude.com/en/docs/claude-code/skills) for building a personal, LLM-maintained knowledge base and feeding it from PDF/HTML/ODT sources.
 
 ## Skills
 
@@ -17,10 +17,16 @@ Changes from upstream:
 
 Convert HTML and ODT documents to Markdown with [pandoc](https://pandoc.org/), including embedded images (`--extract-media` for ODT; HTML `<img>` references need a separate download pass, since pandoc only rewrites the link). Written to complement `karpathy-llm-wiki`'s source-archival rule, but usable standalone.
 
+### `pdf-ingest`
+
+Convert PDF documents to Markdown with [docling](https://github.com/docling-project/docling), including figures (`generate_picture_images` — see `karpathy-llm-wiki`'s note on why this must be set explicitly). Runs each PDF in its own subprocess so page/model memory is released between files instead of accumulating over a batch — useful on memory-constrained machines. The HuggingFace model cache directory is machine-specific and read from a git-ignored `.env` (copy `.env.template` and adjust the path); everything else in the script is portable.
+
 ## Install
 
-Copy a skill's folder into `~/.claude/skills/<name>/` (global) or `<project>/.claude/skills/<name>/` (project-scoped). `pandoc-convert` assumes a pandoc binary is available; edit the path at the top of its `SKILL.md` to match your system (a portable Windows build works fine, no install required).
+Copy a skill's folder into `~/.claude/skills/<name>/` (global) or `<project>/.claude/skills/<name>/` (project-scoped).
+- `pandoc-convert` assumes a pandoc binary is available; edit the path at the top of its `SKILL.md` to match your system (a portable Windows build works fine, no install required).
+- `pdf-ingest` assumes a Python environment with `docling` and `python-dotenv` installed (`pip install docling python-dotenv`); edit the venv/python path in its `SKILL.md`, and copy `.env.template` to `.env` with your own `HF_CACHE_DIR`.
 
 ## License
 
-`karpathy-llm-wiki/` keeps its original MIT license (see `karpathy-llm-wiki/LICENSE`) and attribution to Astro-Han. `pandoc-convert/` is MIT as well.
+`karpathy-llm-wiki/` keeps its original MIT license (see `karpathy-llm-wiki/LICENSE`) and attribution to Astro-Han. `pandoc-convert/` and `pdf-ingest/` are MIT as well.
