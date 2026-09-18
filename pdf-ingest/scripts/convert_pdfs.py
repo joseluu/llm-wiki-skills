@@ -6,17 +6,24 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_CACHE_DIR = SKILL_DIR / "models"
 
-# HF_CACHE_DIR est machine-specifique (chemin vers le cache de modeles
-# docling, pas verse dans git) -> defini dans .env a cote de SKILL.md,
-# voir .env.template.
-load_dotenv(SKILL_DIR / ".env")
-HF_CACHE_DIR = os.environ.get("HF_CACHE_DIR")
-if not HF_CACHE_DIR:
-    sys.exit(
-        f"HF_CACHE_DIR non defini. Copier {SKILL_DIR / '.env.template'} "
-        f"vers {SKILL_DIR / '.env'} et adapter le chemin."
-    )
+# Zero-config case: a models/ cache dropped right next to this skill
+# (sibling of scripts/, same level as SKILL.md) is used as-is, no .env
+# needed. Otherwise HF_CACHE_DIR is machine-specific (defined in .env
+# next to SKILL.md, not versioned -- see .env.template).
+if DEFAULT_CACHE_DIR.is_dir():
+    HF_CACHE_DIR = str(DEFAULT_CACHE_DIR)
+else:
+    load_dotenv(SKILL_DIR / ".env")
+    HF_CACHE_DIR = os.environ.get("HF_CACHE_DIR")
+    if not HF_CACHE_DIR:
+        sys.exit(
+            f"HF_CACHE_DIR non defini et {DEFAULT_CACHE_DIR} absent. "
+            f"Soit placer le cache de modeles dans {DEFAULT_CACHE_DIR}, "
+            f"soit copier {SKILL_DIR / '.env.template'} vers "
+            f"{SKILL_DIR / '.env'} et adapter le chemin."
+        )
 
 # Must be set before importing huggingface_hub / docling, since the cache
 # location is resolved from env vars at import time.
