@@ -19,13 +19,13 @@ Convert HTML and ODT documents to Markdown with [pandoc](https://pandoc.org/), i
 
 ### `pdf-ingest`
 
-Convert PDF documents to Markdown with [docling](https://github.com/docling-project/docling), including figures (`generate_picture_images` — see `karpathy-llm-wiki`'s note on why this must be set explicitly). Runs each PDF in its own subprocess so page/model memory is released between files instead of accumulating over a batch — useful on memory-constrained machines. The HuggingFace model cache directory is machine-specific and read from a git-ignored `.env` (copy `.env.template` and adjust the path); everything else in the script is portable.
+Convert PDF documents to Markdown with [docling](https://github.com/docling-project/docling), including figures (`generate_picture_images` — see `karpathy-llm-wiki`'s note on why this must be set explicitly). Runs each PDF in its own subprocess so page/model memory is released between files instead of accumulating over a batch — useful on memory-constrained machines. The HuggingFace model cache directory is machine-specific: a `models/` folder dropped next to `SKILL.md` is used automatically (zero-config), otherwise it's read from a git-ignored `.env` (copy `.env.template` and adjust the path).
 
 ## Install
 
 Copy a skill's folder into `~/.claude/skills/<name>/` (global) or `<project>/.claude/skills/<name>/` (project-scoped).
 - `pandoc-convert` assumes a pandoc binary is available; edit the path at the top of its `SKILL.md` to match your system (a portable Windows build works fine, no install required).
-- `pdf-ingest` assumes a Python environment with `docling` and `python-dotenv` installed (`pip install docling python-dotenv`); edit the venv/python path in its `SKILL.md`, and copy `.env.template` to `.env` with your own `HF_CACHE_DIR`.
+- `pdf-ingest` needs a Python environment with its dependencies installed (`pip install -r pdf-ingest/scripts/requirements.txt`); edit the venv/python path in its `SKILL.md`, and copy `.env.template` to `.env` with your own `HF_CACHE_DIR` (unless you're using the zero-config `models/` cache path).
 
 ## License
 
