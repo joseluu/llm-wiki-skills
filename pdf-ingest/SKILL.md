@@ -1,23 +1,23 @@
 ---
 name: pdf-ingest
-description: Convert PDF documents to Markdown using docling from a local venv at C:\Users\josel\hobby_w\gestion-windows\pdf-ingest. Use when the user asks to convert PDF(s) to markdown/.md, extract text/tables from a PDF, or mentions docling or pdf-ingest.
+description: Convert PDF documents to Markdown using docling, run via `uv run` (dependencies declared inline in the script, no venv to set up). Use when the user asks to convert PDF(s) to markdown/.md, extract text/tables from a PDF, or mentions docling or pdf-ingest.
 ---
 
 # pdf-ingest — conversion PDF -> Markdown via docling
 
-Installation dediee dans `C:\Users\josel\hobby_w\gestion-windows\pdf-ingest`:
-venv Python 3.12 (`venv\`) et package `docling`. Le script companion
-`convert_pdfs.py` vit dans `scripts\` a cote de ce SKILL.md.
+Le script companion `convert_pdfs.py` vit dans `scripts\` a cote de ce
+SKILL.md et se lance via `uv run` — ses dependances (`docling`,
+`python-dotenv`, `torch`) sont declarees en metadonnees PEP 723 en tete
+du fichier ; `uv` resout et met en cache un environnement dedie tout
+seul, aucun venv a preparer a la main.
 
 ## Usage
 
 ```
-C:\Users\josel\hobby_w\gestion-windows\pdf-ingest\venv\Scripts\python.exe ^
-    C:\Users\josel\.claude\skills\pdf-ingest\scripts\convert_pdfs.py ^
-    <repertoire_pdf> <repertoire_sortie_md>
+uv run C:\Users\josel\.claude\skills\pdf-ingest\scripts\convert_pdfs.py <repertoire_pdf> <repertoire_sortie_md>
 ```
 
-(en Git Bash: mêmes chemins avec `/` et `./venv/Scripts/python.exe`)
+(en Git Bash: `uv run` fonctionne identiquement avec des chemins `/`)
 
 - Convertit tous les `*.pdf` du repertoire source, ecrit un `.md` par PDF
   (meme nom de base) dans le repertoire de sortie (cree si absent).
@@ -79,8 +79,11 @@ sous ~1 Go. Si une conversion est tuee pour cause de memoire:
 ## Notes
 
 - Repertoire de travail pas de depot git — pas de commit a faire ici.
-- `python -m pip install docling` a deja resolu ~100 dependances
-  (torch, transformers, opencv, etc.) — reinstaller depuis zero sur cette
-  machine prend plusieurs minutes.
+- Le premier `uv run` resout et telecharge ~100 dependances (torch,
+  transformers, opencv, etc.) — plusieurs minutes et plusieurs centaines
+  de Mo. `uv` met ensuite ces wheels en cache (cache `uv` global, pas
+  lie a ce repertoire) : les lancements suivants, meme depuis un autre
+  script/projet demandant les memes paquets, reutilisent le cache et
+  demarrent vite, sans reinstaller.
 - Pour un autre repertoire source/sortie, juste relancer la commande
   Usage ci-dessus avec d'autres chemins — rien d'autre a reconfigurer.
