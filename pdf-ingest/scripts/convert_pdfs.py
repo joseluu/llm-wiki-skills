@@ -46,9 +46,17 @@ def convert_one(pdf_path: Path, out_path: Path) -> None:
     import torch
 
     torch.set_num_threads(1)
-    from docling.document_converter import DocumentConverter
+    from docling.datamodel.base_models import InputFormat
+    from docling.datamodel.pipeline_options import PdfPipelineOptions
+    from docling.document_converter import DocumentConverter, PdfFormatOption
 
-    converter = DocumentConverter()
+    # Decode formulas to LaTeX (CodeFormulaV2 model) instead of leaving them
+    # as "<!-- formula-not-decoded -->" placeholders in the output markdown.
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.do_formula_enrichment = True
+    converter = DocumentConverter(
+        format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
+    )
     result = converter.convert(pdf_path)
     markdown = result.document.export_to_markdown()
     out_path.write_text(markdown, encoding="utf-8")

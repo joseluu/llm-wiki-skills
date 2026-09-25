@@ -27,6 +27,10 @@ uv run C:\Users\josel\.claude\skills\pdf-ingest\scripts\convert_pdfs.py <reperto
   rappelle lui-meme avec `--single <pdf> <out.md>`) pour que la memoire
   (modeles torch + images de page) soit liberee par l'OS entre chaque
   fichier plutot que de s'accumuler sur tout le lot.
+- Formules mathematiques decodees en LaTeX (`do_formula_enrichment=True`,
+  modele `CodeFormulaV2` deja present dans le cache initial — voir plus
+  bas) : rendues `$...$` (inline) / `$$...$$` (bloc) dans le markdown de
+  sortie au lieu du placeholder `<!-- formula-not-decoded -->`.
 - A la fin: `Termine: N/M conversions reussies.` + liste des echecs.
 
 ## Configuration (.env)
