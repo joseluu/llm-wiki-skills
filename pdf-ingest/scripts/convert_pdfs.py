@@ -49,17 +49,26 @@ def convert_one(pdf_path: Path, out_path: Path) -> None:
     from docling.datamodel.base_models import InputFormat
     from docling.datamodel.pipeline_options import PdfPipelineOptions
     from docling.document_converter import DocumentConverter, PdfFormatOption
+    from docling_core.types.doc import ImageRefMode
 
     # Decode formulas to LaTeX (CodeFormulaV2 model) instead of leaving them
     # as "<!-- formula-not-decoded -->" placeholders in the output markdown.
     pipeline_options = PdfPipelineOptions()
     pipeline_options.do_formula_enrichment = True
+    pipeline_options.generate_picture_images = True
     converter = DocumentConverter(
         format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
     )
     result = converter.convert(pdf_path)
-    markdown = result.document.export_to_markdown()
-    out_path.write_text(markdown, encoding="utf-8")
+    # Images referenced by the PDF (figures, schemas) are extracted next to
+    # the markdown instead of being dropped, one <nom>_artifacts/ dir per PDF.
+    artifacts_dir = out_path.parent / (out_path.stem + "_artifacts")
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    result.document.save_as_markdown(
+        filename=out_path,
+        artifacts_dir=artifacts_dir,
+        image_mode=ImageRefMode.REFERENCED,
+    )
 
 
 def convert_dir(input_dir: Path, output_dir: Path) -> None:

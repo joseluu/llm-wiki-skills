@@ -31,6 +31,10 @@ uv run C:\Users\josel\.claude\skills\pdf-ingest\scripts\convert_pdfs.py <reperto
   modele `CodeFormulaV2` deja present dans le cache initial — voir plus
   bas) : rendues `$...$` (inline) / `$$...$$` (bloc) dans le markdown de
   sortie au lieu du placeholder `<!-- formula-not-decoded -->`.
+- Images/figures du PDF extraites (`generate_picture_images=True` +
+  `save_as_markdown(..., image_mode=REFERENCED)`) dans un dossier
+  `<nom_pdf>_artifacts/` a cote du `.md`, referencees par liens relatifs
+  — au lieu d'etre perdues comme avec `export_to_markdown()` seul.
 - A la fin: `Termine: N/M conversions reussies.` + liste des echecs.
 
 ## Configuration (.env)
